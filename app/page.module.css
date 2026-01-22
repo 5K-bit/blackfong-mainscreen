@@ -1,0 +1,203 @@
+.container {
+  min-height: 100vh;
+  background-color: #050505;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace; /* Monospace feels more like a ritual terminal */
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Film Grain/Noise Effect */
+.noise {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Grain_Noise.png');
+  z-index: 10;
+}
+
+.headerWrapper {
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+}
+
+.logoSmall {
+  font-size: 0.9rem;
+  color: #888;
+  letter-spacing: 0.1rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.customWallet {
+  /* Custom wallet button styling if needed */
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+}
+
+.textSection {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.cubeImage {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+  animation: float 6s ease-in-out infinite;
+}
+
+.buttonText {
+  display: block;
+}
+
+.buttonBracket {
+  display: none;
+}
+
+.cubeWrapper {
+  position: relative;
+  margin: 4rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.mainArtifact {
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+.cubeGlow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.title {
+  font-size: 3.5rem;
+  letter-spacing: 1.2rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.8rem;
+  letter-spacing: 0.4rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.manifesto {
+  text-align: center;
+  line-height: 2;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.highlight {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.ritualBox {
+  border: 1px solid #222;
+  padding: 1.5rem;
+  background: rgba(10, 10, 10, 0.5);
+  position: relative;
+  overflow: hidden;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.scannerLine {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 2px;
+  background: rgba(255,255,255,0.2);
+  animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 4rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 1rem;
+}
+
+.ritualButton {
+  border: 1px solid #333;
+  padding: 1rem;
+  text-decoration: none;
+  color: #888;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: transparent;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ritualButton:hover {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  transform: scale(1.05);
+}
+
+.ritualButton button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  width: 100%;
+  padding: 0;
+}
+
+.ritualButton:hover button {
+  color: #000;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 2rem;
+  color: #333;
+  font-size: 0.7rem;
+}
