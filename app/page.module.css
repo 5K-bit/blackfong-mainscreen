@@ -265,14 +265,48 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  gap: 1rem;
+  padding: 1.5rem;
 }
 
-.swapContainer iframe {
-  width: 100%;
-  height: 480px;
-  border: none;
+/* Style OnchainKit Swap components to match our design */
+.swapContainer :global([class*="Swap"]) {
   background: transparent;
+  color: #e0e0e0;
+}
+
+.swapContainer :global(input),
+.swapContainer :global(select) {
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid #333;
+  color: #e0e0e0;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.swapContainer :global(button) {
+  border: 1px solid #333;
+  color: #888;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.swapContainer :global(button:hover:not(:disabled)) {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.swapToggleButton {
+  margin: 0.5rem 0;
+}
+
+.swapButton {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1rem;
+  font-size: 0.9rem;
 }
 
 /* Responsive design */
