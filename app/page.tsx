@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { Transaction } from "@coinbase/onchainkit/transaction";
-import { CONTRACT_ADDRESS, CONTRACT_CHAIN, CONTRACT_ABI } from "./calls";
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./calls";
 import { parseEther } from "viem";
 
 export default function Home() {
