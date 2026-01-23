@@ -1,14 +1,14 @@
 "use client";
 import { ReactNode } from "react";
-import { base } from "viem/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import "@coinbase/onchainkit/styles.css";
+import { BASE_CHAIN } from "@/lib/constants";
 
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
     <OnchainKitProvider
       apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-      chain={base}
+      chain={BASE_CHAIN}
       config={{
         appearance: {
           mode: "auto",
@@ -16,6 +16,9 @@ export function RootProvider({ children }: { children: ReactNode }) {
         wallet: {
           display: "modal",
           preference: "all",
+          supportedWallets: {
+            frame: true,
+          },
         },
       }}
     >
