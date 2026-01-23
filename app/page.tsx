@@ -74,11 +74,13 @@ export default function Home() {
     }
   }, [burnAmount, decimals]);
 
+  const zero = BigInt(0);
+
   const balanceValue = typeof balanceOf === "bigint" ? balanceOf : null;
   const totalSupplyValue = typeof totalSupply === "bigint" ? totalSupply : null;
 
   const burnAmountIsValid =
-    burnAmountParsed !== null && burnAmountParsed > 0n;
+    burnAmountParsed !== null && burnAmountParsed > zero;
   const hasSufficientBalance =
     burnAmountParsed !== null &&
     balanceValue !== null &&
