@@ -19,8 +19,26 @@ export const metadata: Metadata = {
     "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
   openGraph: {
     title: "Blackfong - BKFG Protocol",
-    description: "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+    description:
+      "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+    url: "https://blackfong-mainscreen.vercel.app",
+    siteName: "Blackfong",
     type: "website",
+    images: [
+      {
+        url: "https://blackfong-mainscreen.vercel.app/blackfong-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "Blackfong Cube",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blackfong - BKFG Protocol",
+    description:
+      "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+    images: ["https://blackfong-mainscreen.vercel.app/blackfong-preview.png"],
   },
 };
 
