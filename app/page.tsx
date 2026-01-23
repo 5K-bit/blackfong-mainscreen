@@ -77,7 +77,7 @@ export default function Home() {
           </a>
           <div className={styles.ritualButton}>
             <Transaction
-              chainId={CONTRACT_CHAIN.id}
+              chainId={8453}
               calls={[
                 {
                   address: CONTRACT_ADDRESS,
