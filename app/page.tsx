@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import styles from "./page.module.css";
 import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { Transaction } from "@coinbase/onchainkit/transaction";
@@ -25,12 +26,13 @@ export default function Home() {
         {/* The Core Artifact */}
         <div className={styles.cubeWrapper}>
           <div className={styles.cubeGlow} />
-          <img
+          <Image
             src="/blackfgong-cube.svg"
             alt="Blackfong Cube"
             width={220}
             height={220}
             className={styles.cubeImage}
+            priority
           />
         </div>
 
@@ -75,7 +77,7 @@ export default function Home() {
           </a>
           <div className={styles.ritualButton}>
             <Transaction
-              chain={CONTRACT_CHAIN}
+              chainId={CONTRACT_CHAIN.id}
               calls={[
                 {
                   address: CONTRACT_ADDRESS,
