@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { Transaction } from "@coinbase/onchainkit/transaction";
+import { Swap } from "@coinbase/onchainkit/swap";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./calls";
 import { parseEther } from "viem";
 
 export default function Home() {
+  const [isBuyOpen, setIsBuyOpen] = useState(false);
+
   return (
     <main className={styles.container}>
       {/* Background Ambient Effect */}
@@ -107,6 +111,25 @@ export default function Home() {
       <footer className={styles.footer}>
         <p>© 2025–2026 // PROTOCOL_BKFG</p>
       </footer>
+
+      {/* Floating Buy Dropdown */}
+      <div className={styles.floatingBuyContainer}>
+        <button
+          className={styles.buyToggleButton}
+          onClick={() => setIsBuyOpen(!isBuyOpen)}
+          aria-label="Toggle Buy Menu"
+        >
+          <span className={styles.buttonText}>BUY</span>
+        </button>
+        
+        {isBuyOpen && (
+          <div className={styles.buyDropdown}>
+            <div className={styles.swapContainer}>
+              <Swap tokenAddress={CONTRACT_ADDRESS} />
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
