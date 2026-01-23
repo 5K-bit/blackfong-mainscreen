@@ -75,25 +75,24 @@ export default function Home() {
             <span className={styles.buttonText}>Buy on Thirdweb</span>
             <span className={styles.buttonBracket}></span>
           </a>
-          <div className={styles.ritualButton}>
-            <Transaction
-              chainId={8453}
-              calls={[
-                {
-                  address: CONTRACT_ADDRESS,
-                  abi: CONTRACT_ABI,
-                  functionName: "transfer",
-                  args: [
-                    "0x0000000000000000000000000000000000000000" as `0x${string}`,
-                    parseEther("0"),
-                  ],
-                },
-              ]}
-              button={
-                <span className={styles.buttonText}>Summon Core</span>
-              }
-            />
-          </div>
+          <Transaction
+            chainId={8453}
+            calls={[
+              {
+                address: CONTRACT_ADDRESS,
+                abi: CONTRACT_ABI,
+                functionName: "transfer",
+                args: [
+                  "0x0000000000000000000000000000000000000000" as `0x${string}`,
+                  parseEther("0"),
+                ],
+              },
+            ]}
+          >
+            <div className={styles.ritualButton}>
+              <span className={styles.buttonText}>Summon Core</span>
+            </div>
+          </Transaction>
           <a
             href="#"
             className={styles.ritualButton}
