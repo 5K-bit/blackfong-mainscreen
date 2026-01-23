@@ -125,7 +125,7 @@ export default function Home() {
         {isBuyOpen && (
           <div className={styles.buyDropdown}>
             <div className={styles.swapContainer}>
-              <Swap tokenAddress={CONTRACT_ADDRESS} />
+              <Swap />
             </div>
           </div>
         )}
