@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google";
 import { RootProvider } from "./rootProvider";
 import "./globals.css";
+import { APP_URL, FRAME_POST_URL, OG_IMAGE_URL } from "@/lib/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,6 +15,7 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: process.env.NEXT_PUBLIC_PROJECT_NAME || "Blackfong - BKFG Protocol",
   description:
     "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
@@ -21,12 +23,12 @@ export const metadata: Metadata = {
     title: "Blackfong - BKFG Protocol",
     description:
       "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
-    url: "https://blackfong-mainscreen.vercel.app",
+    url: APP_URL,
     siteName: "Blackfong",
     type: "website",
     images: [
       {
-        url: "https://blackfong-mainscreen.vercel.app/blackfong-preview.png",
+        url: OG_IMAGE_URL,
         width: 1200,
         height: 630,
         alt: "Blackfong Cube",
@@ -38,7 +40,18 @@ export const metadata: Metadata = {
     title: "Blackfong - BKFG Protocol",
     description:
       "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
-    images: ["https://blackfong-mainscreen.vercel.app/blackfong-preview.png"],
+    images: [OG_IMAGE_URL],
+  },
+  other: {
+    "fc:frame": "vNext",
+    "fc:frame:image": OG_IMAGE_URL,
+    "fc:frame:image:aspect_ratio": "1.91:1",
+    "fc:frame:button:1": "Summon Core",
+    "fc:frame:button:1:action": "post",
+    "fc:frame:button:2": "Enter Void",
+    "fc:frame:button:2:action": "link",
+    "fc:frame:button:2:target": APP_URL,
+    "fc:frame:post_url": FRAME_POST_URL,
   },
 };
 

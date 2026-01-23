@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
-import { Transaction } from "@coinbase/onchainkit/transaction";
+import { Wallet, ConnectWallet, WalletDropdown } from "@coinbase/onchainkit/wallet";
 import {
   Swap,
   SwapAmountInput,
@@ -13,32 +12,15 @@ import {
   SwapMessage,
   SwapToast,
 } from "@coinbase/onchainkit/swap";
-import type { Token } from "@coinbase/onchainkit/token";
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./calls";
-import { parseEther } from "viem";
+import {
+  BKFG_CONTRACT_ADDRESS,
+  getBasescanAddressUrl,
+  getThirdwebAddressUrl,
+} from "@/lib/constants";
+import { BKFG_TOKEN, ETH_TOKEN, SWAPPABLE_TOKENS } from "@/lib/tokens";
 
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
-
-  // ETH token definition for Base (per Base docs)
-  const ETHToken: Token = {
-    name: "ETH",
-    address: "",
-    symbol: "ETH",
-    decimals: 18,
-    image: "https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png",
-    chainId: 8453,
-  };
-
-  // BKFG token definition
-  const BKFGToken: Token = {
-    address: CONTRACT_ADDRESS,
-    chainId: 8453,
-    decimals: 18, // Update if your token uses different decimals
-    name: "Blackfong",
-    symbol: "BKFG",
-    image: "", // Add your token logo URL if available
-  };
 
   return (
     <main className={styles.container}>
@@ -47,9 +29,10 @@ export default function Home() {
 
       {/* Header */}
       <header className={styles.headerWrapper}>
-        <div className={styles.logoSmall}>BKFG // {CONTRACT_ADDRESS}</div>
+        <div className={styles.logoSmall}>BKFG // {BKFG_CONTRACT_ADDRESS}</div>
         <Wallet>
           <ConnectWallet className={styles.customWallet} />
+          <WalletDropdown />
         </Wallet>
       </header>
 
@@ -90,7 +73,7 @@ export default function Home() {
         {/* Actions */}
         <nav className={styles.actionsGrid}>
           <a
-            href={`https://basescan.org/address/${CONTRACT_ADDRESS}`}
+            href={getBasescanAddressUrl(BKFG_CONTRACT_ADDRESS)}
             target="_blank"
             rel="noreferrer"
             className={styles.ritualButton}
@@ -99,7 +82,7 @@ export default function Home() {
             <span className={styles.buttonBracket}></span>
           </a>
           <a
-            href={`https://thirdweb.com/base/${CONTRACT_ADDRESS}`}
+            href={getThirdwebAddressUrl(BKFG_CONTRACT_ADDRESS)}
             target="_blank"
             rel="noreferrer"
             className={styles.ritualButton}
@@ -107,24 +90,14 @@ export default function Home() {
             <span className={styles.buttonText}>Buy on Thirdweb</span>
             <span className={styles.buttonBracket}></span>
           </a>
-          <Transaction
-            chainId={8453}
-            calls={[
-              {
-                address: CONTRACT_ADDRESS,
-                abi: CONTRACT_ABI,
-                functionName: "transfer",
-                args: [
-                  "0x0000000000000000000000000000000000000000" as `0x${string}`,
-                  parseEther("0"),
-                ],
-              },
-            ]}
+          <button
+            type="button"
+            className={styles.ritualButton}
+            onClick={() => setIsBuyOpen(true)}
+            aria-controls="bkfg-buy-panel"
           >
-            <div className={styles.ritualButton}>
-              <span className={styles.buttonText}>Summon Core</span>
-            </div>
-          </Transaction>
+            <span className={styles.buttonText}>Summon Core</span>
+          </button>
           <a
             href="#"
             className={styles.ritualButton}
@@ -146,23 +119,27 @@ export default function Home() {
           className={styles.buyToggleButton}
           onClick={() => setIsBuyOpen(!isBuyOpen)}
           aria-label="Toggle Buy Menu"
+          aria-expanded={isBuyOpen}
+          aria-controls="bkfg-buy-panel"
         >
           <span className={styles.buttonText}>BUY</span>
         </button>
         
         {isBuyOpen && (
-          <div className={styles.buyDropdown}>
+          <div className={styles.buyDropdown} id="bkfg-buy-panel">
             <div className={styles.swapContainer}>
               <Swap>
                 <SwapAmountInput
                   label="Sell"
-                  token={ETHToken}
+                  token={ETH_TOKEN}
+                  swappableTokens={SWAPPABLE_TOKENS}
                   type="from"
                 />
                 <SwapToggleButton className={styles.swapToggleButton} />
                 <SwapAmountInput
                   label="Buy"
-                  token={BKFGToken}
+                  token={BKFG_TOKEN}
+                  swappableTokens={SWAPPABLE_TOKENS}
                   type="to"
                 />
                 <SwapButton />
