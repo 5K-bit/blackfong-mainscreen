@@ -5,7 +5,6 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { Transaction } from "@coinbase/onchainkit/transaction";
-import { Swap } from "@coinbase/onchainkit/swap";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./calls";
 import { parseEther } from "viem";
 
@@ -125,7 +124,12 @@ export default function Home() {
         {isBuyOpen && (
           <div className={styles.buyDropdown}>
             <div className={styles.swapContainer}>
-              <Swap />
+              <iframe
+                id="iframe-widget"
+                src={`https://tools.nfts2me.com/swap?widget=classic&toToken=${CONTRACT_ADDRESS}`}
+                style={{ height: "480px", width: "100%", border: "none" }}
+                title="Crypto Swap Widget"
+              />
             </div>
           </div>
         )}
