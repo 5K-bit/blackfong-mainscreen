@@ -1,4 +1,4 @@
-import { base } from "wagmi/chains";
+import { base } from "viem/chains";
 import { parseAbi } from "viem";
 
 export const CONTRACT_ADDRESS = "0xCD025D20B1284c79eE4c63e003E0f1E421FbE249" as `0x${string}`;

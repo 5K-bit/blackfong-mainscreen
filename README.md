@@ -21,8 +21,10 @@ npm install
 Next, create a `.env.local` file with your OnchainKit API key:
 
 ```bash
-NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_api_key_here
+NEXT_PUBLIC_ONCHAINKIT_API_KEY=KEXU1c3apE1Lydc7Ce0LXoRFbgIz9wQ9
 ```
+
+**Important**: For production deployment on Vercel, add this environment variable in your Vercel project settings. The API key is required for Swap components, price fetching, and transaction sponsorship.
 
 Get your API key from [Coinbase Developer Portal](https://portal.cdp.coinbase.com/).
 
