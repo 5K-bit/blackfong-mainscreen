@@ -164,6 +164,9 @@ export default function Home() {
           ? (payload.tokens as TokenListItem[])
           : [];
 
+        const isHexAddress = (value: string): value is `0x${string}` =>
+          /^0x[a-fA-F0-9]{40}$/.test(value);
+
         const filtered = rawTokens.filter(
           (
             token
@@ -173,6 +176,7 @@ export default function Home() {
             TokenListItem =>
             token?.chainId === BASE_CHAIN_ID &&
             typeof token.address === "string" &&
+            isHexAddress(token.address) &&
             typeof token.decimals === "number" &&
             typeof token.name === "string" &&
             typeof token.symbol === "string"
