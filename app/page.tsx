@@ -26,18 +26,20 @@ import {
   SwapMessage,
   SwapToast,
 } from "@coinbase/onchainkit/swap";
-import { useAccount, usePublicClient, useReadContract } from "wagmi";
+import { useAccount, useChainId, usePublicClient, useReadContract } from "wagmi";
 import { formatUnits, parseUnits } from "viem";
 import { BKFG_ABI, BKFG_TRANSFER_EVENT } from "@/lib/abi";
 import {
   BASE_CHAIN_ID,
   BKFG_CONTRACT_ADDRESS,
   BKFG_DEPLOYMENT_BLOCK,
+  UNISWAP_TOKEN_LIST_URL,
   ZERO_ADDRESS,
   getBasescanAddressUrl,
   getThirdwebAddressUrl,
 } from "@/lib/constants";
 import { BKFG_TOKEN, ETH_TOKEN, SWAPPABLE_TOKENS } from "@/lib/tokens";
+import type { Token } from "@coinbase/onchainkit/token";
 
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
@@ -46,7 +48,12 @@ export default function Home() {
   const [lastUserBurnedAmount, setLastUserBurnedAmount] =
     useState<bigint | null>(null);
   const [isBurnHistoryLoading, setIsBurnHistoryLoading] = useState(false);
+  const [isTokenListLoading, setIsTokenListLoading] = useState(false);
+  const [tokenListError, setTokenListError] = useState<string | null>(null);
+  const [swappableTokens, setSwappableTokens] =
+    useState<Token[]>(SWAPPABLE_TOKENS);
   const { address } = useAccount();
+  const chainId = useChainId();
   const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
 
   const { data: decimalsData } = useReadContract({
@@ -126,6 +133,83 @@ export default function Home() {
     if (!hasSufficientBalance) return "Insufficient BKFG balance.";
     return null;
   })();
+
+  const isCorrectChain = chainId === BASE_CHAIN_ID;
+
+  useEffect(() => {
+    console.log("Chain:", chainId);
+  }, [chainId]);
+
+  useEffect(() => {
+    let isActive = true;
+    const loadTokens = async () => {
+      setIsTokenListLoading(true);
+      setTokenListError(null);
+      try {
+        const response = await fetch(UNISWAP_TOKEN_LIST_URL);
+        if (!response.ok) {
+          throw new Error(`Token list HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        const rawTokens = Array.isArray(payload?.tokens) ? payload.tokens : [];
+        const filtered = rawTokens.filter(
+          (token) => token?.chainId === BASE_CHAIN_ID
+        );
+        const mapped: Token[] = filtered
+          .filter((token) => typeof token.address === "string")
+          .map((token) => ({
+            address: token.address,
+            chainId: token.chainId,
+            decimals: token.decimals,
+            name: token.name,
+            symbol: token.symbol,
+            image: token.logoURI ?? null,
+          }));
+
+        const merged = new Map<string, Token>();
+        const addToken = (token: Token) => {
+          const addressKey = token.address ? token.address.toLowerCase() : "";
+          const key = `${token.chainId}:${addressKey}`;
+          if (!merged.has(key)) {
+            merged.set(key, token);
+          }
+        };
+
+        [ETH_TOKEN, BKFG_TOKEN].forEach(addToken);
+        mapped.forEach(addToken);
+
+        if (isActive) {
+          console.log("Token list loaded:", mapped.length);
+          setSwappableTokens(Array.from(merged.values()));
+        }
+      } catch (error) {
+        if (isActive) {
+          console.log("Token list load failed:", error);
+          setTokenListError("Token registry failed to load.");
+          setSwappableTokens(SWAPPABLE_TOKENS);
+        }
+      } finally {
+        if (isActive) {
+          setIsTokenListLoading(false);
+        }
+      }
+    };
+
+    loadTokens();
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const swapReady =
+    isCorrectChain &&
+    !isTokenListLoading &&
+    swappableTokens.length > 1 &&
+    Boolean(publicClient);
+
+  useEffect(() => {
+    console.log("Router ready:", swapReady);
+  }, [swapReady]);
 
   const fetchBurnHistory = useCallback(async () => {
     if (!publicClient) return;
@@ -403,22 +487,33 @@ export default function Home() {
         {isBuyOpen && (
           <div className={styles.buyDropdown} id="bkfg-buy-panel">
             <div className={styles.swapContainer}>
+              {!isCorrectChain && (
+                <p className={styles.swapStatus}>
+                  Switch to Base to unlock live routing.
+                </p>
+              )}
+              {isCorrectChain && tokenListError && (
+                <p className={styles.swapStatus}>{tokenListError}</p>
+              )}
+              {isCorrectChain && isTokenListLoading && (
+                <p className={styles.swapStatus}>Loading token registry...</p>
+              )}
               <Swap>
                 <SwapSettings />
                 <SwapAmountInput
                   label="Sell"
                   token={ETH_TOKEN}
-                  swappableTokens={SWAPPABLE_TOKENS}
+                  swappableTokens={swappableTokens}
                   type="from"
                 />
                 <SwapToggleButton className={styles.swapToggleButton} />
                 <SwapAmountInput
                   label="Buy"
                   token={BKFG_TOKEN}
-                  swappableTokens={SWAPPABLE_TOKENS}
+                  swappableTokens={swappableTokens}
                   type="to"
                 />
-                <SwapButton />
+                <SwapButton disabled={!swapReady} />
                 <SwapMessage />
                 <SwapToast />
               </Swap>

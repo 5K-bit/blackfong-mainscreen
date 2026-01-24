@@ -384,6 +384,14 @@
   border-color: #fff;
 }
 
+.swapStatus {
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  color: #777;
+  letter-spacing: 0.15rem;
+  text-transform: uppercase;
+}
+
 .swapToggleButton {
   margin: 0.5rem 0;
 }

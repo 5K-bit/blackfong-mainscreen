@@ -30,6 +30,8 @@ const getDeploymentBlock = () => {
 export const BKFG_DEPLOYMENT_BLOCK = getDeploymentBlock();
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+export const UNISWAP_TOKEN_LIST_URL = "https://tokens.uniswap.org";
+
 export const OG_IMAGE_PATH = "/blackfong-preview.png";
 export const OG_IMAGE_URL = `${APP_URL}${OG_IMAGE_PATH}`;
 export const FRAME_POST_URL = `${APP_URL}/api/frame`;
