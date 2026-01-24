@@ -22,7 +22,7 @@ import {
   useChainId,
   usePublicClient,
   useReadContract,
-  useWalletClient,
+  useSendTransaction,
   useSwitchChain,
 } from "wagmi";
 import { encodeFunctionData, formatUnits, parseUnits } from "viem";
@@ -82,8 +82,7 @@ export default function Home() {
   const { address } = useAccount();
   const chainId = useChainId();
   const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
-  const { data: walletClient } = useWalletClient({ chainId: BASE_CHAIN_ID });
-  const resolvedAccount = address as `0x${string}` | undefined;
+  const { sendTransactionAsync } = useSendTransaction();
   const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
 
   const { data: decimalsData } = useReadContract({
@@ -388,9 +387,9 @@ export default function Home() {
 
   const swapReady =
     isCorrectChain &&
+    Boolean(address) &&
     Boolean(quote?.to) &&
-    Boolean(quote?.data) &&
-    Boolean(walletClient);
+    Boolean(quote?.data);
 
   useEffect(() => {
     console.log("Router ready:", swapReady);
@@ -454,7 +453,6 @@ export default function Home() {
 
   const handleApprove = useCallback(async () => {
     if (
-      !walletClient ||
       !address ||
       !allowanceTarget ||
       !sellAmountParsed ||
@@ -470,9 +468,8 @@ export default function Home() {
         functionName: "approve",
         args: [allowanceTarget, sellAmountParsed],
       });
-      if (!resolvedAccount) return;
-      const hash = await walletClient.sendTransaction({
-        account: resolvedAccount,
+      const hash = await sendTransactionAsync({
+        chainId: BASE_CHAIN_ID,
         to: sellToken.address as `0x${string}`,
         data,
         value: zero,
@@ -489,19 +486,18 @@ export default function Home() {
     refetchAllowance,
     sellAmountParsed,
     sellToken.address,
-    walletClient,
     zero,
+    sendTransactionAsync,
   ]);
 
   const handleSwap = useCallback(async () => {
-    if (!walletClient || !address || !quote) return;
+    if (!address || !quote) return;
     if (!isHexAddress(quote.to) || !quote.data) return;
     try {
       setIsSwapSubmitting(true);
       setSwapTxHash(null);
-      if (!resolvedAccount) return;
-      const hash = await walletClient.sendTransaction({
-        account: resolvedAccount,
+      const hash = await sendTransactionAsync({
+        chainId: BASE_CHAIN_ID,
         to: quote.to as `0x${string}`,
         data: quote.data as `0x${string}`,
         value: BigInt(quote.value ?? "0"),
@@ -510,7 +506,7 @@ export default function Home() {
     } finally {
       setIsSwapSubmitting(false);
     }
-  }, [address, quote, walletClient]);
+  }, [address, quote, sendTransactionAsync]);
 
   const swapStatus = (() => {
     if (!isCorrectChain) return "Switch to Base to unlock live routing.";
@@ -547,7 +543,7 @@ export default function Home() {
   const canApprove =
     needsApproval &&
     !isApproveSubmitting &&
-    Boolean(walletClient) &&
+    Boolean(address) &&
     Boolean(allowanceTarget);
   const canSwap =
     swapReady &&
