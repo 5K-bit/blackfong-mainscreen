@@ -26,6 +26,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   z-index: 20;
 }
 
@@ -34,6 +36,11 @@
   color: #888;
   letter-spacing: 0.1rem;
   font-family: 'Courier New', Courier, monospace;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .customWallet {
@@ -390,6 +397,21 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .headerWrapper {
+    padding: 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 2.4rem;
+    letter-spacing: 0.6rem;
+  }
+
+  .subtitle {
+    letter-spacing: 0.2rem;
+  }
+
   .floatingBuyContainer {
     bottom: 1rem;
     right: 1rem;
