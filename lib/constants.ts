@@ -17,6 +17,19 @@ export const APP_DESCRIPTION =
 export const APP_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://blackfong-mainscreen.vercel.app";
 
+const deploymentBlockEnv = process.env.NEXT_PUBLIC_BKFG_DEPLOY_BLOCK;
+const getDeploymentBlock = () => {
+  if (!deploymentBlockEnv) return BigInt(0);
+  try {
+    return BigInt(deploymentBlockEnv);
+  } catch {
+    return BigInt(0);
+  }
+};
+
+export const BKFG_DEPLOYMENT_BLOCK = getDeploymentBlock();
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 export const OG_IMAGE_PATH = "/blackfong-preview.png";
 export const OG_IMAGE_URL = `${APP_URL}${OG_IMAGE_PATH}`;
 export const FRAME_POST_URL = `${APP_URL}/api/frame`;

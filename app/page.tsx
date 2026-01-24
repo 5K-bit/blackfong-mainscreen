@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import {
@@ -26,12 +26,14 @@ import {
   SwapMessage,
   SwapToast,
 } from "@coinbase/onchainkit/swap";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, usePublicClient, useReadContract } from "wagmi";
 import { formatUnits, parseUnits } from "viem";
-import { BKFG_ABI } from "@/lib/abi";
+import { BKFG_ABI, BKFG_TRANSFER_EVENT } from "@/lib/abi";
 import {
   BASE_CHAIN_ID,
   BKFG_CONTRACT_ADDRESS,
+  BKFG_DEPLOYMENT_BLOCK,
+  ZERO_ADDRESS,
   getBasescanAddressUrl,
   getThirdwebAddressUrl,
 } from "@/lib/constants";
@@ -40,11 +42,12 @@ import { BKFG_TOKEN, ETH_TOKEN, SWAPPABLE_TOKENS } from "@/lib/tokens";
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
   const [burnAmount, setBurnAmount] = useState("1");
-  const [lastBurnedAmount, setLastBurnedAmount] = useState<string | null>(null);
+  const [lastBurnedAmount, setLastBurnedAmount] = useState<bigint | null>(null);
+  const [lastUserBurnedAmount, setLastUserBurnedAmount] =
+    useState<bigint | null>(null);
+  const [isBurnHistoryLoading, setIsBurnHistoryLoading] = useState(false);
   const { address } = useAccount();
-  const storageKey = address
-    ? `bkfg:last-burned:${address.toLowerCase()}`
-    : null;
+  const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
 
   const { data: decimalsData } = useReadContract({
     address: BKFG_CONTRACT_ADDRESS,
@@ -110,6 +113,11 @@ export default function Home() {
     return trimmedFraction ? `${whole}.${trimmedFraction}` : whole;
   };
 
+  const formatTokenAmount = (value?: bigint | null) => {
+    const formatted = formatAmount(value);
+    return formatted === "—" ? "—" : `${formatted} BKFG`;
+  };
+
   const burnError = (() => {
     if (!address) return "Connect wallet to summon the core.";
     if (balanceValue === null) return "Reading your BKFG balance...";
@@ -119,14 +127,50 @@ export default function Home() {
     return null;
   })();
 
-  useEffect(() => {
-    if (!storageKey) {
+  const fetchBurnHistory = useCallback(async () => {
+    if (!publicClient) return;
+    setIsBurnHistoryLoading(true);
+    try {
+      const latestBlock = await publicClient.getBlockNumber();
+      const burnLogs = await publicClient.getLogs({
+        address: BKFG_CONTRACT_ADDRESS,
+        event: BKFG_TRANSFER_EVENT,
+        args: {
+          to: ZERO_ADDRESS,
+        },
+        fromBlock: BKFG_DEPLOYMENT_BLOCK,
+        toBlock: latestBlock,
+      });
+      const latestBurn = burnLogs[burnLogs.length - 1];
+      setLastBurnedAmount(latestBurn?.args?.amount ?? null);
+
+      if (address) {
+        const userBurnLogs = await publicClient.getLogs({
+          address: BKFG_CONTRACT_ADDRESS,
+          event: BKFG_TRANSFER_EVENT,
+          args: {
+            from: address,
+            to: ZERO_ADDRESS,
+          },
+          fromBlock: BKFG_DEPLOYMENT_BLOCK,
+          toBlock: latestBlock,
+        });
+        const latestUserBurn = userBurnLogs[userBurnLogs.length - 1];
+        setLastUserBurnedAmount(latestUserBurn?.args?.amount ?? null);
+      } else {
+        setLastUserBurnedAmount(null);
+      }
+    } catch {
       setLastBurnedAmount(null);
-      return;
+      setLastUserBurnedAmount(null);
+    } finally {
+      setIsBurnHistoryLoading(false);
     }
-    const stored = window.localStorage.getItem(storageKey);
-    setLastBurnedAmount(stored);
-  }, [storageKey]);
+  }, [address, publicClient]);
+
+  useEffect(() => {
+    fetchBurnHistory();
+  }, [fetchBurnHistory]);
 
   return (
     <main className={styles.container}>
@@ -239,12 +283,9 @@ export default function Home() {
                   : undefined
               }
               onSuccess={() => {
-                setLastBurnedAmount(burnAmount);
-                if (storageKey) {
-                  window.localStorage.setItem(storageKey, burnAmount);
-                }
                 refetchBalance();
                 refetchTotalSupply();
+                fetchBurnHistory();
               }}
               className={styles.transactionWrapper}
             >
@@ -302,25 +343,37 @@ export default function Home() {
             <div className={styles.ritualRow}>
               <span className={styles.ritualLabel}>Balance</span>
               <span className={styles.ritualValue}>
-                {formatAmount(balanceValue)} BKFG
+                {formatTokenAmount(balanceValue)}
               </span>
             </div>
             <div className={styles.ritualRow}>
               <span className={styles.ritualLabel}>Total supply (before)</span>
               <span className={styles.ritualValue}>
-                {formatAmount(totalSupplyValue)} BKFG
+                {formatTokenAmount(totalSupplyValue)}
               </span>
             </div>
             <div className={styles.ritualRow}>
               <span className={styles.ritualLabel}>Total supply (after)</span>
               <span className={styles.ritualValue}>
-                {formatAmount(totalSupplyAfter)} BKFG
+                {formatTokenAmount(totalSupplyAfter)}
               </span>
             </div>
             <div className={styles.ritualRow}>
-              <span className={styles.ritualLabel}>Last burned (local)</span>
+              <span className={styles.ritualLabel}>Last burn (chain)</span>
               <span className={styles.ritualValue}>
-                {lastBurnedAmount ? `${lastBurnedAmount} BKFG` : "—"}
+                {isBurnHistoryLoading
+                  ? "Reading ledger..."
+                  : formatTokenAmount(lastBurnedAmount)}
+              </span>
+            </div>
+            <div className={styles.ritualRow}>
+              <span className={styles.ritualLabel}>Last burn (you)</span>
+              <span className={styles.ritualValue}>
+                {address
+                  ? isBurnHistoryLoading
+                    ? "Reading ledger..."
+                    : formatTokenAmount(lastUserBurnedAmount)
+                  : "—"}
               </span>
             </div>
           </div>
