@@ -12,7 +12,6 @@ import {
   WalletDropdownLink,
   WalletDropdownDisconnect,
 } from "@coinbase/onchainkit/wallet";
-import { Connected } from "@coinbase/onchainkit/connected";
 import {
   Transaction,
   TransactionButton,
@@ -205,16 +204,14 @@ export default function Home() {
             <span className={styles.buttonText}>Buy on Thirdweb</span>
             <span className={styles.buttonBracket}></span>
           </a>
-          <Connected
-            fallback={
-              <ConnectWallet
-                className={styles.ritualButton}
-                disconnectedLabel={
-                  <span className={styles.buttonText}>Connect Wallet</span>
-                }
-              />
-            }
-          >
+          {!address ? (
+            <ConnectWallet
+              className={styles.ritualButton}
+              disconnectedLabel={
+                <span className={styles.buttonText}>Connect Wallet</span>
+              }
+            />
+          ) : (
             <Transaction
               chainId={BASE_CHAIN_ID}
               calls={
@@ -261,7 +258,7 @@ export default function Home() {
               />
               <TransactionToast />
             </Transaction>
-          </Connected>
+          )}
           <a
             href="#"
             className={styles.ritualButton}
