@@ -183,7 +183,7 @@ export default function Home() {
         );
 
         const mapped: Token[] = filtered.map((token) => ({
-          address: token.address,
+          address: token.address as `0x${string}`,
           chainId: token.chainId,
           decimals: token.decimals,
           name: token.name,
