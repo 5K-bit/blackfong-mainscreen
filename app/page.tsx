@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import {
@@ -42,6 +42,9 @@ export default function Home() {
   const [burnAmount, setBurnAmount] = useState("1");
   const [lastBurnedAmount, setLastBurnedAmount] = useState<string | null>(null);
   const { address } = useAccount();
+  const storageKey = address
+    ? `bkfg:last-burned:${address.toLowerCase()}`
+    : null;
 
   const { data: decimalsData } = useReadContract({
     address: BKFG_CONTRACT_ADDRESS,
@@ -115,6 +118,15 @@ export default function Home() {
     if (!hasSufficientBalance) return "Insufficient BKFG balance.";
     return null;
   })();
+
+  useEffect(() => {
+    if (!storageKey) {
+      setLastBurnedAmount(null);
+      return;
+    }
+    const stored = window.localStorage.getItem(storageKey);
+    setLastBurnedAmount(stored);
+  }, [storageKey]);
 
   return (
     <main className={styles.container}>
@@ -228,6 +240,9 @@ export default function Home() {
               }
               onSuccess={() => {
                 setLastBurnedAmount(burnAmount);
+                if (storageKey) {
+                  window.localStorage.setItem(storageKey, burnAmount);
+                }
                 refetchBalance();
                 refetchTotalSupply();
               }}
@@ -303,7 +318,7 @@ export default function Home() {
               </span>
             </div>
             <div className={styles.ritualRow}>
-              <span className={styles.ritualLabel}>Last burned</span>
+              <span className={styles.ritualLabel}>Last burned (local)</span>
               <span className={styles.ritualValue}>
                 {lastBurnedAmount ? `${lastBurnedAmount} BKFG` : "—"}
               </span>
