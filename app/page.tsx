@@ -83,6 +83,7 @@ export default function Home() {
   const chainId = useChainId();
   const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
   const { data: walletClient } = useWalletClient({ chainId: BASE_CHAIN_ID });
+  const resolvedAccount = address as `0x${string}` | undefined;
   const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
 
   const { data: decimalsData } = useReadContract({
@@ -469,8 +470,9 @@ export default function Home() {
         functionName: "approve",
         args: [allowanceTarget, sellAmountParsed],
       });
+      if (!resolvedAccount) return;
       const hash = await walletClient.sendTransaction({
-        account: address,
+        account: resolvedAccount,
         to: sellToken.address as `0x${string}`,
         data,
         value: zero,
@@ -497,8 +499,9 @@ export default function Home() {
     try {
       setIsSwapSubmitting(true);
       setSwapTxHash(null);
+      if (!resolvedAccount) return;
       const hash = await walletClient.sendTransaction({
-        account: address,
+        account: resolvedAccount,
         to: quote.to as `0x${string}`,
         data: quote.data as `0x${string}`,
         value: BigInt(quote.value ?? "0"),
