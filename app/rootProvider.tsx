@@ -8,11 +8,16 @@ import {
   cookieStorage,
   http,
 } from "wagmi";
-import { base } from "wagmi/chains";
-import { baseAccount, coinbaseWallet, injected, metaMask } from "wagmi/connectors";
+import { base, baseSepolia } from "wagmi/chains";
+import {
+  baseAccount,
+  coinbaseWallet,
+  injected,
+  metaMask,
+} from "wagmi/connectors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@coinbase/onchainkit/styles.css";
-import { APP_NAME, APP_URL, OG_IMAGE_URL, BASE_CHAIN } from "@/lib/constants";
+import { APP_NAME, OG_IMAGE_URL, BASE_CHAIN } from "@/lib/constants";
 
 const queryClient = new QueryClient();
 
@@ -21,20 +26,13 @@ export function RootProvider({ children }: { children: ReactNode }) {
     const apiKey = process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY;
     const appName = APP_NAME;
     const appLogoUrl = OG_IMAGE_URL;
-    const origin = typeof window === "undefined" ? APP_URL : window.location.origin;
 
     return createConfig({
-      chains: [base],
+      chains: [base, baseSepolia],
       connectors: [
         baseAccount({ appName, appLogoUrl }),
         coinbaseWallet({ appName, appLogoUrl, preference: "all" }),
-        metaMask({
-          dappMetadata: {
-            name: appName,
-            url: origin,
-            iconUrl: appLogoUrl,
-          },
-        }),
+        metaMask(),
         injected(),
       ],
       storage: createStorage({ storage: cookieStorage }),
@@ -42,6 +40,11 @@ export function RootProvider({ children }: { children: ReactNode }) {
       transports: {
         [base.id]: apiKey
           ? http(`https://api.developer.coinbase.com/rpc/v1/base/${apiKey}`)
+          : http(),
+        [baseSepolia.id]: apiKey
+          ? http(
+              `https://api.developer.coinbase.com/rpc/v1/base-sepolia/${apiKey}`
+            )
           : http(),
       },
     });
