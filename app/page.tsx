@@ -151,20 +151,41 @@ export default function Home() {
           throw new Error(`Token list HTTP ${response.status}`);
         }
         const payload = await response.json();
-        const rawTokens = Array.isArray(payload?.tokens) ? payload.tokens : [];
+        type TokenListItem = {
+          address?: string;
+          chainId?: number;
+          decimals?: number;
+          name?: string;
+          symbol?: string;
+          logoURI?: string | null;
+        };
+
+        const rawTokens = Array.isArray(payload?.tokens)
+          ? (payload.tokens as TokenListItem[])
+          : [];
+
         const filtered = rawTokens.filter(
-          (token) => token?.chainId === BASE_CHAIN_ID
+          (
+            token
+          ): token is Required<
+            Pick<TokenListItem, "address" | "chainId" | "decimals" | "name" | "symbol">
+          > &
+            TokenListItem =>
+            token?.chainId === BASE_CHAIN_ID &&
+            typeof token.address === "string" &&
+            typeof token.decimals === "number" &&
+            typeof token.name === "string" &&
+            typeof token.symbol === "string"
         );
-        const mapped: Token[] = filtered
-          .filter((token) => typeof token.address === "string")
-          .map((token) => ({
-            address: token.address,
-            chainId: token.chainId,
-            decimals: token.decimals,
-            name: token.name,
-            symbol: token.symbol,
-            image: token.logoURI ?? null,
-          }));
+
+        const mapped: Token[] = filtered.map((token) => ({
+          address: token.address,
+          chainId: token.chainId,
+          decimals: token.decimals,
+          name: token.name,
+          symbol: token.symbol,
+          image: token.logoURI ?? null,
+        }));
 
         const merged = new Map<string, Token>();
         const addToken = (token: Token) => {
