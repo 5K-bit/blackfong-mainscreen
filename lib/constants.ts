@@ -9,6 +9,11 @@ export const BKFG_CONTRACT_ADDRESS =
 export const BASESCAN_BASE_URL = "https://basescan.org";
 export const THIRDWEB_BASE_URL = "https://thirdweb.com/base";
 
+export const APP_NAME =
+  process.env.NEXT_PUBLIC_PROJECT_NAME || "Blackfong - BKFG Protocol";
+export const APP_DESCRIPTION =
+  "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.";
+
 export const APP_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://blackfong-mainscreen.vercel.app";
 

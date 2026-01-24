@@ -7,7 +7,12 @@ import {
   Wallet,
   ConnectWallet,
   WalletDropdown,
+  WalletDropdownBasename,
+  WalletDropdownFundLink,
+  WalletDropdownLink,
+  WalletDropdownDisconnect,
 } from "@coinbase/onchainkit/wallet";
+import { Connected } from "@coinbase/onchainkit/connected";
 import {
   Transaction,
   TransactionButton,
@@ -16,6 +21,7 @@ import {
 import {
   Swap,
   SwapAmountInput,
+  SwapSettings,
   SwapToggleButton,
   SwapButton,
   SwapMessage,
@@ -121,7 +127,27 @@ export default function Home() {
         <div className={styles.logoSmall}>BKFG // {BKFG_CONTRACT_ADDRESS}</div>
         <Wallet>
           <ConnectWallet className={styles.customWallet} />
-          <WalletDropdown />
+          <WalletDropdown>
+            <WalletDropdownBasename />
+            <WalletDropdownFundLink />
+            <WalletDropdownLink
+              icon="wallet"
+              href="https://keys.coinbase.com"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Wallet
+            </WalletDropdownLink>
+            <WalletDropdownLink
+              icon="wallet"
+              href={getBasescanAddressUrl(BKFG_CONTRACT_ADDRESS)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View BKFG on Basescan
+            </WalletDropdownLink>
+            <WalletDropdownDisconnect />
+          </WalletDropdown>
         </Wallet>
       </header>
 
@@ -179,52 +205,63 @@ export default function Home() {
             <span className={styles.buttonText}>Buy on Thirdweb</span>
             <span className={styles.buttonBracket}></span>
           </a>
-          <Transaction
-            chainId={BASE_CHAIN_ID}
-            calls={
-              burnAmountIsValid && burnAmountParsed
-                ? [
-                    {
-                      address: BKFG_CONTRACT_ADDRESS,
-                      abi: BKFG_ABI,
-                      functionName: "burn",
-                      args: [burnAmountParsed],
-                    },
-                  ]
-                : undefined
+          <Connected
+            fallback={
+              <ConnectWallet
+                className={styles.ritualButton}
+                disconnectedLabel={
+                  <span className={styles.buttonText}>Connect Wallet</span>
+                }
+              />
             }
-            onSuccess={() => {
-              setLastBurnedAmount(burnAmount);
-              refetchBalance();
-              refetchTotalSupply();
-            }}
-            className={styles.transactionWrapper}
           >
-            <TransactionButton
-              disabled={!canBurn}
-              render={({ onSubmit, status, isDisabled }) => {
-                const label =
-                  status === "success"
-                    ? "View Transaction"
-                    : status === "pending"
-                      ? "Summoning..."
-                      : "Summon Core";
-
-                return (
-                  <button
-                    type="button"
-                    className={styles.ritualButton}
-                    onClick={onSubmit}
-                    disabled={isDisabled}
-                    aria-disabled={isDisabled}
-                  >
-                    <span className={styles.buttonText}>{label}</span>
-                  </button>
-                );
+            <Transaction
+              chainId={BASE_CHAIN_ID}
+              calls={
+                burnAmountIsValid && burnAmountParsed
+                  ? [
+                      {
+                        address: BKFG_CONTRACT_ADDRESS,
+                        abi: BKFG_ABI,
+                        functionName: "burn",
+                        args: [burnAmountParsed],
+                      },
+                    ]
+                  : undefined
+              }
+              onSuccess={() => {
+                setLastBurnedAmount(burnAmount);
+                refetchBalance();
+                refetchTotalSupply();
               }}
-            />
-            <TransactionToast />
-          </Transaction>
+              className={styles.transactionWrapper}
+            >
+              <TransactionButton
+                disabled={!canBurn}
+                render={({ onSubmit, status, isDisabled }) => {
+                  const label =
+                    status === "success"
+                      ? "View Transaction"
+                      : status === "pending"
+                        ? "Summoning..."
+                        : "Summon Core";
+
+                  return (
+                    <button
+                      type="button"
+                      className={styles.ritualButton}
+                      onClick={onSubmit}
+                      disabled={isDisabled}
+                      aria-disabled={isDisabled}
+                    >
+                      <span className={styles.buttonText}>{label}</span>
+                    </button>
+                  );
+                }}
+              />
+              <TransactionToast />
+            </Transaction>
+          </Connected>
           <a
             href="#"
             className={styles.ritualButton}
@@ -302,6 +339,7 @@ export default function Home() {
           <div className={styles.buyDropdown} id="bkfg-buy-panel">
             <div className={styles.swapContainer}>
               <Swap>
+                <SwapSettings />
                 <SwapAmountInput
                   label="Sell"
                   token={ETH_TOKEN}

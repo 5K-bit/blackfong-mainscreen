@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google";
 import { RootProvider } from "./rootProvider";
 import "./globals.css";
-import { APP_URL, FRAME_POST_URL, OG_IMAGE_URL } from "@/lib/constants";
+import {
+  APP_DESCRIPTION,
+  APP_NAME,
+  APP_URL,
+  FRAME_POST_URL,
+  OG_IMAGE_URL,
+} from "@/lib/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,13 +22,11 @@ const sourceCodePro = Source_Code_Pro({
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
-  title: process.env.NEXT_PUBLIC_PROJECT_NAME || "Blackfong - BKFG Protocol",
-  description:
-    "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+  title: APP_NAME,
+  description: APP_DESCRIPTION,
   openGraph: {
-    title: "Blackfong - BKFG Protocol",
-    description:
-      "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
     url: APP_URL,
     siteName: "Blackfong",
     type: "website",
@@ -37,9 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blackfong - BKFG Protocol",
-    description:
-      "Blackfong is not an app. It is an artifact. BKFG is its bloodstream.",
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
     images: [OG_IMAGE_URL],
   },
   other: {

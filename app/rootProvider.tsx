@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import "@coinbase/onchainkit/styles.css";
-import { BASE_CHAIN } from "@/lib/constants";
+import { APP_NAME, OG_IMAGE_URL, BASE_CHAIN } from "@/lib/constants";
 
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +12,9 @@ export function RootProvider({ children }: { children: ReactNode }) {
       config={{
         appearance: {
           mode: "auto",
+          theme: "hacker",
+          name: APP_NAME,
+          logo: OG_IMAGE_URL,
         },
         wallet: {
           display: "modal",
