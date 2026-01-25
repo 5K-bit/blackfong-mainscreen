@@ -58,10 +58,6 @@ const getTokenKey = (token: Token) =>
 
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
-const [isBurnOpen, setIsBurnOpen] = useState(false);
-const handleBurn = () => {
-    // Logic to handle burn action
-};
   const [burnAmount, setBurnAmount] = useState("1");
   const [lastBurnedAmount, setLastBurnedAmount] = useState<bigint | null>(null);
   const [lastUserBurnedAmount, setLastUserBurnedAmount] =
