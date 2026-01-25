@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import {
@@ -58,6 +58,10 @@ const getTokenKey = (token: Token) =>
 
 export default function Home() {
   const [isBuyOpen, setIsBuyOpen] = useState(false);
+const [isBurnOpen, setIsBurnOpen] = useState(false);
+const handleBurn = () => {
+    // Logic to handle burn action
+};
   const [burnAmount, setBurnAmount] = useState("1");
   const [lastBurnedAmount, setLastBurnedAmount] = useState<bigint | null>(null);
   const [lastUserBurnedAmount, setLastUserBurnedAmount] =
@@ -560,9 +564,9 @@ export default function Home() {
       {/* Header */}
       <header className={styles.headerWrapper}>
         <div className={styles.logoSmall}>BKFG // {BKFG_CONTRACT_ADDRESS}</div>
-        <Wallet>
-          <ConnectWallet className={styles.customWallet} />
-          <WalletDropdown>
+<Wallet>
+  <ConnectWallet className={styles.customWallet} />
+  <WalletDropdown>
             <WalletDropdownBasename />
             <WalletDropdownFundLink />
             <WalletDropdownLink
