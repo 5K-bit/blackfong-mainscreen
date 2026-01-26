@@ -46,14 +46,20 @@ export const metadata: Metadata = {
     images: [OG_IMAGE_URL],
   },
   other: {
+    // Farcaster Frame metadata
     "fc:frame": "vNext",
     "fc:frame:image": OG_IMAGE_URL,
     "fc:frame:image:aspect_ratio": "1.91:1",
-    "fc:frame:button:1": "Summon Core",
+    "fc:frame:button:1": "🔥 Summon Core",
     "fc:frame:button:1:action": "post",
-    "fc:frame:button:2": "Enter Void",
+    "fc:frame:button:2": "🌀 Enter Void",
     "fc:frame:button:2:action": "link",
     "fc:frame:button:2:target": APP_URL,
+    "fc:frame:button:3": "📊 View Stats",
+    "fc:frame:button:3:action": "post",
+    "fc:frame:button:4": "💰 Buy BKFG",
+    "fc:frame:button:4:action": "link",
+    "fc:frame:button:4:target": `${APP_URL}?buy=true`,
     "fc:frame:post_url": FRAME_POST_URL,
   },
 };
