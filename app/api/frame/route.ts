@@ -16,9 +16,10 @@ import {
 } from "@/lib/frames";
 
 // Logging utility
-function logFrame(level: "info" | "error", message: string, data?: Record<string, unknown>) {
+function logFrame(level: "info" | "error", message: string, data?: Record<string, unknown> | Error | unknown) {
   const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] [Frame ${level.toUpperCase()}] ${message}`, data || "");
+  const logData = data instanceof Error ? { error: data.message } : data;
+  console.log(`[${timestamp}] [Frame ${level.toUpperCase()}] ${message}`, logData || "");
 }
 
 // Frame response headers
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
     logFrame("info", "POST request received");
 
     // Parse request body
-    let body: any;
+    let body: Record<string, unknown>;
     try {
       body = await request.json();
     } catch {
@@ -162,11 +163,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract data from validated request
-    const untrustedData = body.untrustedData || {};
-    const buttonIndex = untrustedData.buttonIndex || 0;
-    const fid = untrustedData.fid;
-    const timestamp = untrustedData.timestamp;
-    const network = untrustedData.network?.name || "unknown";
+    const untrustedData = (body?.untrustedData as Record<string, unknown>) || {};
+    const buttonIndex = (untrustedData.buttonIndex as number) || 0;
+    const fid = untrustedData.fid as number | undefined;
+    const timestamp = untrustedData.timestamp as number | undefined;
+    const network = ((untrustedData.network as Record<string, unknown>)?.name as string) || "unknown";
 
     logFrame("info", "Frame interaction", {
       buttonIndex,
@@ -176,7 +177,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Parse current state if present
-    const currentState = parseFrameState(body.untrustedData?.state);
+    const currentState = parseFrameState((body?.untrustedData as Record<string, unknown>)?.state as string | undefined);
 
     // Handle button interactions
     const buttonHandler = handleFrameButtonClick(buttonIndex, currentState);

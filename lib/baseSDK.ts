@@ -128,11 +128,12 @@ export function encodeContractCall(
  * Base gas estimation helpers
  */
 export async function estimateBaseGas(
-  publicClient: Record<string, unknown>,
+  publicClient: unknown,
   transactionData: Record<string, unknown>
 ): Promise<bigint> {
   try {
-    const estimate = await publicClient.estimateGas(transactionData);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const estimate = await (publicClient as any).estimateGas(transactionData);
     return estimate;
   } catch (error) {
     console.error("Gas estimation failed:", error);
@@ -145,12 +146,13 @@ export async function estimateBaseGas(
  * Check if an address has sufficient balance
  */
 export async function checkBalance(
-  publicClient: Record<string, unknown>,
+  publicClient: unknown,
   address: `0x${string}`,
   required: bigint
 ): Promise<boolean> {
   try {
-    const balance = await publicClient.getBalance({ address });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const balance = await (publicClient as any).getBalance({ address });
     return balance >= required;
   } catch (error) {
     console.error("Balance check failed:", error);
@@ -185,7 +187,7 @@ export function buildBaseTransaction(data: BaseTransactionData): BaseTransaction
  * Validate transaction on Base
  */
 export async function validateBaseTransaction(
-  publicClient: Record<string, unknown>,
+  publicClient: unknown,
   transaction: BaseTransactionData
 ): Promise<{ valid: boolean; error?: string }> {
   try {
@@ -198,7 +200,8 @@ export async function validateBaseTransaction(
     }
 
     // Try to simulate the transaction
-    const result = await publicClient.call({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await (publicClient as any).call({
       account: transaction.from,
       to: transaction.to,
       data: transaction.data,

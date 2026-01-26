@@ -229,12 +229,12 @@ export function escapeHtml(text: string): string {
 /**
  * Parse and decode frame state
  */
-export function parseFrameState(stateJson?: string): FrameState | null {
-  if (!stateJson) return null;
+export function parseFrameState(stateJson?: string): FrameState | undefined {
+  if (!stateJson) return undefined;
   try {
-    return JSON.parse(stateJson);
+    return JSON.parse(stateJson) as FrameState;
   } catch {
-    return null;
+    return undefined;
   }
 }
 
