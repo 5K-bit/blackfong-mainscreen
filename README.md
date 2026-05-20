@@ -1,100 +1,124 @@
-# Blackfong - BKFG Protocol
+# blackfong-mainscreen
 
-A Base OnchainKit miniapp built with Next.js, following the [official Base documentation](https://docs.base.org/get-started/build-app).
+blackfong-mainscreen is a Next.js front end for the BKFG token on Base, combining wallet connection, token burn flow, purchase entry points, and Farcaster frame support inside a branded Blackfong interface.
+
+## What It Is
+
+This repository is a web application for interacting with the BKFG token contract on Base. It includes:
+
+- wallet connection through OnchainKit and Wagmi
+- token reads for supply and wallet balance
+- a burn transaction flow
+- links to Base explorer and purchase surfaces
+- a Farcaster frame endpoint for distribution outside the main app
+
+The visual identity is intentionally Blackfong, but the repo is ultimately a working onchain interface rather than a generic starter.
+
+## Why It Exists
+
+This project exists to present BKFG through a controlled product surface that is more useful and more portfolio-ready than a raw contract page or tutorial scaffold.
+
+## Problem It Solves
+
+Token projects often have either bare infrastructure or generic demo front ends. blackfong-mainscreen solves that by pairing real Base integrations with a distinct branded interface for viewing, buying, and burning BKFG.
 
 ## Features
 
-- ✅ Base OnchainKit integration
-- ✅ Wallet connection (Coinbase Wallet, MetaMask, WalletConnect)
-- ✅ Transaction component for on-chain interactions
-- ✅ ERC20 token contract integration
-- ✅ Farcaster miniapp compatible
+- connect Coinbase Wallet, MetaMask, and injected wallets
+- read BKFG token supply and connected-wallet balance
+- burn BKFG from the connected wallet
+- show recent burn activity from the chain
+- surface contract and purchase links
+- include a Farcaster frame route at `/api/frame`
+- provide additional integration docs in `QUICK_START.md` and `INTEGRATION_GUIDE.md`
 
-## Getting Started
+## Tech Stack
 
-First, install dependencies:
+- Next.js 15
+- React 19
+- TypeScript
+- Coinbase OnchainKit
+- Wagmi
+- Viem
+- TanStack Query
+- Base mainnet and Base Sepolia support
+
+## Quick Start
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Next, create a `.env.local` file with your OnchainKit API key:
+Create `.env.local`:
 
 ```bash
-NEXT_PUBLIC_ONCHAINKIT_API_KEY=KEXU1c3apE1Lydc7Ce0LXoRFbgIz9wQ9
+NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_coinbase_api_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_PROJECT_NAME=Blackfong - BKFG Protocol
+NEXT_PUBLIC_BKFG_DEPLOY_BLOCK=0
 ```
 
-**Important**: For production deployment on Vercel, add this environment variable in your Vercel project settings. The API key is required for Swap components, price fetching, and transaction sponsorship.
-
-Get your API key from [Coinbase Developer Portal](https://portal.cdp.coinbase.com/).
-
-Then, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-## Deployment to Vercel
+## CLI / API Usage
 
-### 1. Push to GitHub
+Local scripts:
 
-The repository is already initialized. Push to GitHub:
+- `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run lint`
 
-```bash
-git push -u origin main
-```
+Key app routes:
 
-If you need to authenticate, use one of these methods:
+- `/` for the main BKFG interface
+- `GET /api/frame` for the frame HTML response
+- `POST /api/frame` for frame interaction handling
 
-**Option A: SSH (Recommended)**
-```bash
-git remote set-url origin git@github.com:5K-bit/blackfong-mainscreen.git
-git push -u origin main
-```
+Additional setup material is available in:
 
-**Option B: Personal Access Token**
-1. Go to GitHub Settings → Developer settings → Personal access tokens
-2. Create a token with `repo` permissions
-3. Use it as your password when pushing
+- `QUICK_START.md`
+- `INTEGRATION_GUIDE.md`
+- `INTEGRATION_SUMMARY.md`
 
-### 2. Deploy to Vercel
+## Screenshots
 
-1. Go to [Vercel](https://vercel.com) and sign in
-2. Click "Add New Project"
-3. Import your GitHub repository: `5K-bit/blackfong-mainscreen`
-4. Configure environment variables:
-   - `NEXT_PUBLIC_ONCHAINKIT_API_KEY` - Your OnchainKit API key
-   - `NEXT_PUBLIC_PROJECT_NAME` (optional) - Project name
-5. Click "Deploy"
+Screenshots are not added to the README yet. The current repo already contains the branded interface and is a good candidate for a follow-up screenshot pass.
 
-Vercel will automatically:
-- Detect Next.js
-- Install dependencies
-- Build and deploy your app
-- Provide a live URL
+## Status
 
-### 3. Environment Variables in Vercel
+Current status: active interface prototype with working chain integrations.
 
-After deployment, add/update environment variables in:
-**Vercel Dashboard → Your Project → Settings → Environment Variables**
+Implemented now:
 
-Required:
-- `NEXT_PUBLIC_ONCHAINKIT_API_KEY` - Your OnchainKit API key from [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com/)
+- wallet connection and provider setup
+- BKFG supply and balance reads
+- burn transaction flow
+- recent burn activity lookup
+- Base explorer and purchase links
+- Farcaster frame endpoint and metadata
 
-## Base & Farcaster Compliance
+Still worth tightening:
 
-This app follows the official Base documentation:
-- Uses `@coinbase/onchainkit` latest version
-- Implements `OnchainKitProvider` with Base chain
-- Uses `Transaction` component per Base docs
-- Includes proper wallet configuration
-- Compatible with Farcaster miniapp standards
+- README and docs consistency
+- clearer environment variable guidance
+- more explicit deployment and test coverage notes
 
-## Learn More
+## Roadmap
 
-- [Base OnchainKit Documentation](https://docs.base.org/onchainkit)
-- [Base Getting Started Guide](https://docs.base.org/get-started/build-app)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Vercel Deployment Guide](https://vercel.com/docs)
+- add screenshots and a cleaner deployment checklist
+- tighten documentation around required environment variables
+- add tests around frame behavior and critical client logic
+- continue reducing leftover scaffold language while preserving the current product direction
+
+## Portfolio Note
+
+blackfong-mainscreen is part of the Blackfong portfolio because it combines product identity with real onchain behavior. It shows frontend integration work across wallet UX, contract interaction, metadata, and distribution through Farcaster-compatible surfaces without leaning on cloud-heavy infrastructure.
